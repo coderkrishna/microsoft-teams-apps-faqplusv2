@@ -12,7 +12,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.QnAMultiTurn
     /// </summary>
     public class Context
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the context only.
+        /// </summary>
         [JsonProperty("isContextOnly")]
         public bool IsContextOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of prompts.
+        /// </summary>
+        [JsonProperty("prompts")]
+        public List<Prompt> Prompts { get; set; }
     }
 }
