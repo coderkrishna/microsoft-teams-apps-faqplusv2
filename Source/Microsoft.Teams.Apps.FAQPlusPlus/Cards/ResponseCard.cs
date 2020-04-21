@@ -10,6 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.QnAMultiTurn;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -87,6 +88,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 ContentType = AdaptiveCard.ContentType,
                 Content = responseCard,
             };
+        }
+
+        /// <summary>
+        /// This method would be able to get the necessary card.
+        /// </summary>
+        /// <param name="response">The response model that contains the QnA Response.</param>
+        /// <param name="question">The question coming in from the response.</param>
+        /// <param name="answer">The QnA answer.</param>
+        /// <param name="userQuestion">The question that the user has asked the bot.</param>
+        /// <returns>An attachment to append to a message.</returns>
+        public static Attachment GetCard(QnaAnswer response, string question, string answer, string userQuestion)
+        {
+            return null;
         }
     }
 }
