@@ -100,7 +100,113 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>An attachment to append to a message.</returns>
         public static Attachment GetCard(QnaAnswer response, string question, string answer, string userQuestion)
         {
-            return null;
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            {
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = Strings.ResponseHeaderText,
+                        Wrap = true,
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = question,
+                        Wrap = true,
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = answer,
+                        Wrap = true,
+                    },
+                },
+                Actions = BuildListOfActions(response, userQuestion, answer),
+            };
+
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = responseCard,
+            };
+        }
+
+        private static List<AdaptiveAction> BuildListOfActions(QnaAnswer response, string userQuestion, string answer)
+        {
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
+
+            if (response?.Context.Prompts.Count > 0)
+            {
+                actionsList.Add(new AdaptiveShowCardAction
+                {
+                    Title = "Follow Ups",
+                    Card = new AdaptiveCard("1.0")
+                    {
+                        Actions = AddMultiTurnOptions(response?.Context.Prompts),
+                    },
+                });
+            }
+
+            actionsList.Add(
+                new AdaptiveSubmitAction
+                {
+                    Title = Strings.ShareFeedbackButtonText,
+                    Data = new ResponseCardPayload
+                    {
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = Strings.ShareFeedbackDisplayText,
+                            Text = Constants.ShareFeedback,
+                        },
+                        UserQuestion = userQuestion,
+                        KnowledgeBaseAnswer = answer,
+                    },
+                });
+
+            actionsList.Add(new AdaptiveSubmitAction
+            {
+                Title = Strings.AskAnExpertButtonText,
+                Data = new ResponseCardPayload
+                {
+                    MsTeams = new CardAction
+                    {
+                        Type = ActionTypes.MessageBack,
+                        DisplayText = Strings.AskAnExpertDisplayText,
+                        Text = Constants.AskAnExpert,
+                    },
+                    UserQuestion = userQuestion,
+                    KnowledgeBaseAnswer = answer,
+                },
+            });
+
+            return actionsList;
+        }
+
+        private static List<AdaptiveAction> AddMultiTurnOptions(List<Prompt> prompts)
+        {
+            var multiTurnActions = new List<AdaptiveAction>();
+
+            foreach (var item in prompts)
+            {
+                multiTurnActions.Add(new AdaptiveSubmitAction
+                {
+                    Title = item.DisplayText,
+                    Data = new ResponseCardPayload
+                    {
+                        UserQuestion = string.Empty,
+                        KnowledgeBaseAnswer = string.Empty,
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = item.DisplayText,
+                            Text = item.DisplayText,
+                        },
+                    },
+                });
+            }
+
+            return multiTurnActions;
         }
     }
 }
