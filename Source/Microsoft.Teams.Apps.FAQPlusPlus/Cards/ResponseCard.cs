@@ -7,7 +7,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.QnAMultiTurn;
@@ -142,10 +141,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Title = "Follow Ups",
                     Card = new AdaptiveCard("1.0")
                     {
-                        Actions = AddMultiTurnOptions(response?.Context.Prompts),
+                        Actions = AddMultiTurnOptions(response?.Context.Prompts, userQuestion, answer),
                     },
                 });
             }
+
+            actionsList.Add(new AdaptiveSubmitAction
+            {
+                Title = Strings.AskAnExpertButtonText,
+                Data = new ResponseCardPayload
+                {
+                    MsTeams = new CardAction
+                    {
+                        Type = ActionTypes.MessageBack,
+                        DisplayText = Strings.AskAnExpertDisplayText,
+                        Text = Constants.AskAnExpert,
+                    },
+                    UserQuestion = userQuestion,
+                    KnowledgeBaseAnswer = answer,
+                },
+            });
 
             actionsList.Add(
                 new AdaptiveSubmitAction
@@ -164,26 +179,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                 });
 
-            actionsList.Add(new AdaptiveSubmitAction
-            {
-                Title = Strings.AskAnExpertButtonText,
-                Data = new ResponseCardPayload
-                {
-                    MsTeams = new CardAction
-                    {
-                        Type = ActionTypes.MessageBack,
-                        DisplayText = Strings.AskAnExpertDisplayText,
-                        Text = Constants.AskAnExpert,
-                    },
-                    UserQuestion = userQuestion,
-                    KnowledgeBaseAnswer = answer,
-                },
-            });
-
             return actionsList;
         }
 
-        private static List<AdaptiveAction> AddMultiTurnOptions(List<Prompt> prompts)
+        private static List<AdaptiveAction> AddMultiTurnOptions(List<Prompt> prompts, string userQuestion, string answer)
         {
             var multiTurnActions = new List<AdaptiveAction>();
 
@@ -194,8 +193,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Title = item.DisplayText,
                     Data = new ResponseCardPayload
                     {
-                        UserQuestion = string.Empty,
-                        KnowledgeBaseAnswer = string.Empty,
+                        UserQuestion = userQuestion,
+                        KnowledgeBaseAnswer = answer,
                         MsTeams = new CardAction
                         {
                             Type = ActionTypes.MessageBack,

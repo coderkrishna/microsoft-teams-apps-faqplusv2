@@ -926,7 +926,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, message?.Text);
+
+                    // this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
                     break;
             }
 
