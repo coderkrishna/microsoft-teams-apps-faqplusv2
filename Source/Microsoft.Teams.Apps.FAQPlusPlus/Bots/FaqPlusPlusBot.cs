@@ -25,6 +25,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.QnAMultiTurn;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -925,7 +926,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, message?.Text);
+
+                    // this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
                     break;
             }
 
@@ -1428,7 +1431,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, text))).ConfigureAwait(false);
+                        var qnaModel = JsonConvert.DeserializeObject<QnaAnswer>(JsonConvert.SerializeObject(answerData));
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(qnaModel, answerData.Questions.FirstOrDefault(), answerData.Answer, text))).ConfigureAwait(false);
                     }
                 }
                 else
