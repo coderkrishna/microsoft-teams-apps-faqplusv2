@@ -7,13 +7,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class process Response Card- Response by bot when user asks a question to bot.
+    ///  This class process Response Card- Response by bot when user asks a question to bot, and
+    ///  the bot gets an answer from QnA Maker.
     /// </summary>
     public static class ResponseCard
     {
